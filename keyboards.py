@@ -29,3 +29,9 @@ data_zagorod_budget = [{'text': 'от 50 до 70 млн. руб.', 'callback_dat
                        {'text': 'от 100 до 150 млн. руб.', 'callback_data': 'from_hundred'},
                        {'text': 'от 150 до 200 млн. руб', 'callback_data': 'from_hundred_fifth'},
                        {'text': 'от 200 млн. руб.', 'callback_data': 'more_two_hundred'}]
+
+data_catalogs= [{'text': 'Для инвестиций', 'callback_data': 'catalog_invest'},
+                       {'text': 'Для жизни', 'callback_data': 'catalog_life'},
+                       {'text': 'Со льготной ипотекой', 'callback_data': 'catalog_facilities'},
+                       {'text': 'Внутри Садового кольца', 'callback_data': 'catalog_circle'},
+                       {'text': 'Старты продаж', 'callback_data': 'catalog_start'}]

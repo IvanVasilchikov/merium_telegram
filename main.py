@@ -2,9 +2,9 @@ import telebot
 from telebot import types
 import sql
 from sql import add_user, set_user_estate_type, set_user_repair, set_user_zagorod_place, set_user_budget, \
-    set_user_city_type, set_user_city_apartment_type, set_user_phone
+    set_user_city_type, set_user_city_apartment_type, set_user_phone,set_user_catalog
 from keyboards import data_start, data_zagorod_choose, data_city_choose, data_city_type, data_city_repair, \
-    data_zagorod_place, data_city_budget, data_zagorod_budget
+    data_zagorod_place, data_city_budget, data_zagorod_budget,data_catalogs
 
 bot = telebot.TeleBot('5644721445:AAH3pUrP793hfr--oqg2eoMe9K9fD9lJU2M')
 
@@ -15,6 +15,11 @@ def start(message):
         add_user(message.from_user.id)
         question = "Какую недвижимость вы ищите?"
         bot.send_message(message.from_user.id, text=question, reply_markup=gen_markup(data_start))
+    elif message.text == "/catalogs":
+        question = "Выберите подборку из списка, чтобы заказать бесплатный PDF-каталог с описанием и фотографиями жилых комплексов."
+        bot.send_message(message.from_user.id, text=question, reply_markup=gen_markup(data_catalogs))
+    elif message.text == "/call":
+        print('call')
     else:
         bot.send_message(message.from_user.id, 'Напишите /start')
 
@@ -70,6 +75,14 @@ def get_phone(message):
     bot.send_message(message.from_user.id, 'Номер телефона', reply_markup=keyboard)
     bot.register_next_step_handler(message.message, result)
 
+def get_catalog(message):
+    text = "Чтобы скачать каталог, поделитесь телефоном по кнопке или отправьте номер текстовым сообщением. В течение 20 минут вам напишет эксперт по недвижимости, чтобы отправить цены и планировки проектов.";
+    bot.send_message(message.from_user.id, text)
+    keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True, one_time_keyboard=True)
+    button_phone = types.KeyboardButton(text="Отправить телефон", request_contact=True)
+    keyboard.add(button_phone)
+    bot.send_message(message.from_user.id, 'Номер телефона', reply_markup=keyboard)
+    bot.register_next_step_handler(message.message, result)
 
 def result(message):
     if message.contact is not None:
@@ -115,6 +128,9 @@ def callback_worker(call):
         city_budget(call)
     elif call.data == "city_before_hundred" or call.data == "city_from_hundred" or call.data == "city_from_two_hundred" or call.data == "city_from_fifth_hundred":
         set_user_budget(call.from_user.id, get_text(data_city_budget, call.data))
+        get_phone(call)
+    elif call.data == "catalog_invest" or call.data == "catalog_life" or call.data == "catalog_facilities" or call.data == "catalog_circle" or call.data == "catalog_start":
+        set_user_catalog(call.from_user.id, get_text(data_catalogs, call.data))
         get_phone(call)
 
 

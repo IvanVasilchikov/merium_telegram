@@ -13,6 +13,7 @@ class Users(Model):
     city_type = CharField(default="")
     city_apartment_type = CharField(default="")
     telegram_id = IntegerField(default=0)
+    catalog = CharField(default="")
 
     class Meta:
         database = db
@@ -60,4 +61,9 @@ def set_user_city_apartment_type(id,city_apartment_type):
 def set_user_phone(id,phone):
     user = Users.get(Users.telegram_id == id)
     user.phone = phone
+    user.save()
+
+def set_user_catalog(id,catalog):
+    user = Users.get(Users.telegram_id == id)
+    user.catalog = catalog
     user.save()
