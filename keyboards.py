@@ -35,3 +35,9 @@ data_catalogs= [{'text': 'Для инвестиций', 'callback_data': 'catalo
                        {'text': 'Со льготной ипотекой', 'callback_data': 'catalog_facilities'},
                        {'text': 'Внутри Садового кольца', 'callback_data': 'catalog_circle'},
                        {'text': 'Старты продаж', 'callback_data': 'catalog_start'}]
+
+data_contacts=[{'text': 'Москва', 'callback_data': 'contact_moscow'},
+                       {'text': 'Дубай', 'callback_data': 'contact_dubai'},
+                       {'text': 'Лондон', 'callback_data': 'contact_london'},
+                       {'text': 'Вернуться назад', 'callback_data': 'back'}]
+

@@ -2,24 +2,34 @@ import telebot
 from telebot import types
 import sql
 from sql import add_user, set_user_estate_type, set_user_repair, set_user_zagorod_place, set_user_budget, \
-    set_user_city_type, set_user_city_apartment_type, set_user_phone,set_user_catalog
+    set_user_city_type, set_user_city_apartment_type, set_user_phone, set_user_catalog
 from keyboards import data_start, data_zagorod_choose, data_city_choose, data_city_type, data_city_repair, \
-    data_zagorod_place, data_city_budget, data_zagorod_budget,data_catalogs
+    data_zagorod_place, data_city_budget, data_zagorod_budget, data_catalogs, data_contacts
 
 bot = telebot.TeleBot('5644721445:AAH3pUrP793hfr--oqg2eoMe9K9fD9lJU2M')
 
 
 @bot.message_handler(content_types=['text'])
 def start(message):
-    if message.text == '/start':
+    if message.text == '/start' or message.text == 'Вернуться назад':
         add_user(message.from_user.id)
         question = "Какую недвижимость вы ищите?"
         bot.send_message(message.from_user.id, text=question, reply_markup=gen_markup(data_start))
     elif message.text == "/catalogs":
         question = "Выберите подборку из списка, чтобы заказать бесплатный PDF-каталог с описанием и фотографиями жилых комплексов."
         bot.send_message(message.from_user.id, text=question, reply_markup=gen_markup(data_catalogs))
+    elif message.text == "/expert":
+        question = "Перейдите в чат-бота (https://t.me/whitewillestatebot?start=_c2NlbmFyaW89ZXhwZXJ0) для связи с экспертом компании."
+        bot.send_message(message.from_user.id, text=question)
     elif message.text == "/call":
-        print('call')
+        question = "Metrium — международная компания с офисами в Дубае, Москве и Лондоне. Выберите подходящий город"
+        bot.send_message(message.from_user.id, text=question, reply_markup=gen_markup_keyboard(data_contacts))
+    elif message.text == "Москва" or message.text == "Дубай" or message.text == "Лондон":
+        question = "Отвечаем на вопросы ежедневно с 10 до 20 часов по телефону +7 (495) 032-51-11. Встречаем гостей в офисе по адресу: Москва, Пресненская набережная, 6с2, башня «Империя», 3-й подъезд, офис 4315. (https://goo.gl/maps/TgdPceHcQ92NMaa37)"
+        keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True, one_time_keyboard=True)
+        button_phone = types.KeyboardButton(text="Вернуться назад")
+        keyboard.add(button_phone)
+        bot.send_message(message.from_user.id, text=question, reply_markup=keyboard)
     else:
         bot.send_message(message.from_user.id, 'Напишите /start')
 
@@ -29,6 +39,13 @@ def gen_markup(data):
     for item in data:
         markup.add(types.InlineKeyboardButton(item.get('text'), callback_data=item.get('callback_data')))
     return markup
+
+
+def gen_markup_keyboard(data):
+    keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True, one_time_keyboard=True)
+    for item in data:
+        keyboard.add(types.KeyboardButton(item.get('text')))
+    return keyboard
 
 
 def zagorod_choose(message):
@@ -75,6 +92,7 @@ def get_phone(message):
     bot.send_message(message.from_user.id, 'Номер телефона', reply_markup=keyboard)
     bot.register_next_step_handler(message.message, result)
 
+
 def get_catalog(message):
     text = "Чтобы скачать каталог, поделитесь телефоном по кнопке или отправьте номер текстовым сообщением. В течение 20 минут вам напишет эксперт по недвижимости, чтобы отправить цены и планировки проектов.";
     bot.send_message(message.from_user.id, text)
@@ -83,6 +101,7 @@ def get_catalog(message):
     keyboard.add(button_phone)
     bot.send_message(message.from_user.id, 'Номер телефона', reply_markup=keyboard)
     bot.register_next_step_handler(message.message, result)
+
 
 def result(message):
     if message.contact is not None:
